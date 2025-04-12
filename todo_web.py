@@ -58,17 +58,18 @@ def chat():
         return jsonify({"error": "No message provided"}), 400
 
     try:
-        print("Loaded API key:", str(openai.api_key)[:8])  # debug
+        print("Loaded API key:", str(openai.api_key)[:8])  # log part of key
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": user_msg}]
         )
-        print("Full OpenAI response:", response)  # 👈 ADD THIS
         reply = response["choices"][0]["message"]["content"]
         return jsonify({"reply": reply})
     except Exception as e:
-        print("OpenAI Error:", e)
+        import traceback
+        traceback.print_exc()  # 👈 show full stack trace
         return jsonify({"reply": "⚠️ Failed to get a response from OpenAI."})
+
 
 
 
