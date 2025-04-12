@@ -1,14 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import json
 import os
-from openai import OpenAI
+import openai
+
+# ✅ Set API key for OpenAI v0.28
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 FILENAME = "tasks.json"
-
-# ✅ Set API key and create OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 
 # ✅ Load & save tasks for the to-do list
 def load_tasks():
@@ -54,7 +53,7 @@ def delete(index):
 def zones():
     return render_template("zones.html")
 
-# ✅ AI Chat endpoint (OpenAI v1.0+ compatible)
+# ✅ AI Chat endpoint (OpenAI v0.28 compatible)
 @app.route("/chat", methods=["POST"])
 def chat():
     user_msg = request.json.get("message")
@@ -62,17 +61,16 @@ def chat():
         return jsonify({"error": "No message provided"}), 400
 
     try:
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": user_msg}]
         )
-        reply = response.choices[0].message.content
+        reply = response["choices"][0]["message"]["content"]
         return jsonify({"reply": reply})
     except Exception as e:
         import traceback
         traceback.print_exc()
         return jsonify({"reply": "⚠️ Failed to get a response from OpenAI."})
-
 
 # ✅ Webpage for AI chat UI
 @app.route("/chatui")
