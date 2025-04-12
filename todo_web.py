@@ -1,14 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import json
 import os
-import openai
+from openai import OpenAI
 
 app = Flask(__name__)
 FILENAME = "tasks.json"
 
-# ✅ Set your OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
-client = openai.OpenAI()
+# ✅ Set API key and create OpenAI client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 # ✅ Load & save tasks for the to-do list
 def load_tasks():
@@ -72,6 +72,7 @@ def chat():
         import traceback
         traceback.print_exc()
         return jsonify({"reply": "⚠️ Failed to get a response from OpenAI."})
+
 
 # ✅ Webpage for AI chat UI
 @app.route("/chatui")
