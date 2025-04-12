@@ -6,9 +6,11 @@ import openai
 app = Flask(__name__)
 FILENAME = "tasks.json"
 
-# Set your API key
+# ✅ Set your OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI()
 
+# ✅ Load & save tasks for the to-do list
 def load_tasks():
     if os.path.exists(FILENAME):
         with open(FILENAME, "r") as f:
@@ -19,6 +21,7 @@ def save_tasks(tasks):
     with open(FILENAME, "w") as f:
         json.dump(tasks, f)
 
+# ✅ Routes for your to-do app
 @app.route("/")
 def index():
     tasks = load_tasks()
@@ -51,6 +54,7 @@ def delete(index):
 def zones():
     return render_template("zones.html")
 
+# ✅ AI Chat endpoint (OpenAI v1.0+ compatible)
 @app.route("/chat", methods=["POST"])
 def chat():
     user_msg = request.json.get("message")
@@ -58,27 +62,23 @@ def chat():
         return jsonify({"error": "No message provided"}), 400
 
     try:
-        print("Loaded API key:", str(openai.api_key)[:8])  # log part of key
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": user_msg}]
         )
-        reply = response["choices"][0]["message"]["content"]
+        reply = response.choices[0].message.content
         return jsonify({"reply": reply})
     except Exception as e:
         import traceback
-        traceback.print_exc()  # 👈 show full stack trace
+        traceback.print_exc()
         return jsonify({"reply": "⚠️ Failed to get a response from OpenAI."})
 
-
-
-
-
+# ✅ Webpage for AI chat UI
 @app.route("/chatui")
 def chatui():
     return render_template("chat.html")
 
-
+# ✅ Entry point
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
