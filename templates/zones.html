@@ -8,12 +8,22 @@
             font-family: sans-serif;
             padding: 20px;
         }
-        .grid {
-            display: grid;
-            gap: 4px;
-            margin: 10px;
+        .zone-section {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            flex-wrap: wrap;
         }
-        .row { display: flex; justify-content: center; margin-bottom: 10px; }
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .row {
+            display: flex;
+            gap: 4px;
+        }
         .cell {
             width: 60px;
             height: 60px;
@@ -43,97 +53,48 @@
 
     <h1>Zone Layout</h1>
 
-    <!-- NORTH -->
-    <div class="row">
-        <div class="cell black">NU</div><div class="cell black">NU</div><div class="cell black">NU</div>
-        <div class="cell black">NU</div><div class="cell black">NU</div><div class="cell black">NU</div>
-        <div class="cell black">NU</div><div class="cell black">NU</div><div class="cell black">NU</div>
-        <div class="cell black">NU</div><div class="cell black">NU</div><div class="cell black">NU</div>
-        <div class="cell black">NU</div><div class="cell black">NU</div>
-    </div>
-    <div class="row">
-        <div class="cell blue">1174</div><div class="cell blue">1173</div><div class="cell blue">1167</div>
-        <div class="cell blue">1161</div><div class="cell blue">1155</div><div class="cell blue">1154</div>
-        <div class="cell blue">1152</div><div class="cell blue">1151</div><div class="cell yellow">1149</div>
-        <div class="cell yellow">1148</div><div class="cell yellow">1136</div><div class="cell yellow">1130</div>
-        <div class="cell yellow">1124</div><div class="cell yellow">1118</div>
-    </div>
-    <div class="row">
-        <div class="cell yellow">1112</div><div class="cell yellow">1106</div><div class="cell yellow">1105</div>
-        <div class="cell yellow">1103</div>
-    </div>
-
-    <!-- SOUTH -->
-    <div class="row">
-        <div class="cell pink">1310</div><div class="cell pink">1317</div><div class="cell pink">1323</div>
-        <div class="cell pink">1325</div><div class="cell pink">1327</div><div class="cell pink">1328</div>
-        <div class="cell pink">1329</div><div class="cell pink">1335</div>
-        <div class="cell gray">1341</div><div class="cell gray">1347</div><div class="cell gray">1354</div>
-        <div class="cell gray">1360</div><div class="cell gray">1362</div><div class="cell gray">1363</div>
-        <div class="cell gray">1365</div><div class="cell gray">1366</div>
-    </div>
-
-    <!-- WEST -->
-    <div class="grid" style="grid-template-columns: repeat(2, 60px);">
-        <div class="cell black">NU</div><div class="cell orange">1207</div>
-        <div class="cell black">NU</div><div class="cell orange">1209</div>
-        <div class="cell black">NU</div><div class="cell orange">1212</div>
-        <div class="cell black">NU</div><div class="cell orange">1214</div>
-        <div class="cell black">NU</div><div class="cell green">1216</div>
-        <div class="cell black">NU</div><div class="cell green">1218</div>
-        <div class="cell black">NU</div><div class="cell green">1221</div>
-        <div class="cell black">NU</div><div class="cell green">1223</div>
-        <div class="cell black">NU</div><div class="cell green">1225</div>
-        <div class="cell black">NU</div><div class="cell green">1227</div>
-        <div class="cell black">NU</div><div class="cell green">1229</div>
-        <div class="cell black">NU</div><div class="cell green">1232</div>
-        <div class="cell black">NU</div><div class="cell purple">1235</div>
-        <div class="cell black">NU</div><div class="cell purple">1237</div>
-        <div class="cell black">NU</div><div class="cell purple">1239</div>
-        <div class="cell black">NU</div><div class="cell purple">1242</div>
-        <div class="cell black">NU</div><div class="cell purple">1244</div>
-        <div class="cell black">NU</div><div class="cell gray">1248</div>
-        <div class="cell black">NU</div><div class="cell gray">1250</div>
-        <div class="cell black">NU</div><div class="cell gray">1252</div>
-        <div class="cell black">NU</div><div class="cell gray">1260</div>
-    </div>
-
-    <!-- EAST -->
-    <div class="grid" style="grid-template-columns: repeat(2, 60px);">
-        <div class="cell teal">1460</div><div class="cell black">NU</div>
-        <div class="cell teal">1458</div><div class="cell black">NU</div>
-        <div class="cell teal">1456</div><div class="cell black">NU</div>
-        <div class="cell teal">1454</div><div class="cell black">NU</div>
-        <div class="cell teal">1452</div><div class="cell black">NU</div>
-        <div class="cell teal">1449</div><div class="cell black">NU</div>
-    </div>
-
-    <!-- CENTER (AM + PA) -->
-    <div class="row">
-        <div class="cell red">AM</div>
-        <div class="cell orange">PA</div>
-    </div>
-
-    <!-- WATERSPIDERS -->
-    <div class="grid" style="grid-template-columns: repeat(4, 60px);">
-        <div class="cell black">WS</div><div class="cell blue">WS</div><div class="cell pink">WS</div><div class="cell white"></div>
-        <div class="cell green">WS</div><div class="cell purple">WS</div><div class="cell gray">WS</div><div class="cell white"></div>
-        <div class="cell yellow">WS</div><div class="cell gray">WS</div><div class="cell teal">WS</div><div class="cell gray">WS</div>
-    </div>
-
-    <!-- VRC + PG -->
-    <div class="row">
-        <div class="grid" style="grid-template-columns: repeat(2, 60px);">
-            <div class="cell white">N - VRC</div>
-            <div class="cell white"></div>
-            <div class="cell white">S - VRC</div>
-            <div class="cell white"></div>
+    <div class="zone-section">
+        <!-- WEST -->
+        <div class="column">
+            <div class="row"><div class="cell black">NU</div><div class="cell orange">1207</div></div>
+            <div class="row"><div class="cell black">NU</div><div class="cell orange">1209</div></div>
+            <div class="row"><div class="cell black">NU</div><div class="cell orange">1212</div></div>
+            <div class="row"><div class="cell black">NU</div><div class="cell orange">1214</div></div>
+            <div class="row"><div class="cell black">NU</div><div class="cell green">1216</div></div>
+            <div class="row"><div class="cell black">NU</div><div class="cell green">1218</div></div>
         </div>
-        <div class="grid" style="grid-template-columns: repeat(2, 60px);">
-            <div class="cell white">PG</div>
-            <div class="cell white"></div>
-            <div class="cell white"></div>
-            <div class="cell white"></div>
+
+        <!-- NORTH -->
+        <div class="column">
+            <div class="row">
+                <div class="cell black">NU</div><div class="cell black">NU</div><div class="cell black">NU</div>
+                <div class="cell black">NU</div><div class="cell black">NU</div><div class="cell black">NU</div>
+                <div class="cell black">NU</div><div class="cell black">NU</div><div class="cell black">NU</div>
+                <div class="cell black">NU</div>
+            </div>
+            <div class="row">
+                <div class="cell blue">1174</div><div class="cell blue">1173</div><div class="cell blue">1167</div>
+                <div class="cell blue">1161</div><div class="cell blue">1155</div><div class="cell blue">1154</div>
+                <div class="cell blue">1152</div><div class="cell blue">1151</div><div class="cell yellow">1149</div>
+                <div class="cell yellow">1148</div><div class="cell yellow">1136</div><div class="cell yellow">1130</div>
+                <div class="cell yellow">1124</div><div class="cell yellow">1118</div>
+            </div>
+            <div class="row">
+                <div class="cell yellow">1112</div><div class="cell yellow">1106</div><div class="cell yellow">1105</div>
+                <div class="cell yellow">1103</div>
+            </div>
+        </div>
+
+        <!-- SOUTH -->
+        <div class="column">
+            <div class="row">
+                <div class="cell pink">1310</div><div class="cell pink">1317</div><div class="cell pink">1323</div>
+                <div class="cell pink">1325</div><div class="cell pink">1327</div><div class="cell pink">1328</div>
+                <div class="cell pink">1329</div><div class="cell pink">1335</div>
+                <div class="cell gray">1341</div><div class="cell gray">1347</div><div class="cell gray">1354</div>
+                <div class="cell gray">1360</div><div class="cell gray">1362</div><div class="cell gray">1363</div>
+                <div class="cell gray">1365</div><div class="cell gray">1366</div>
+            </div>
         </div>
     </div>
 
