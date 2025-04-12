@@ -58,6 +58,7 @@ def chat():
         return jsonify({"error": "No message provided"}), 400
 
     try:
+        print("Loaded API key:", str(openai.api_key)[:8])  # log the first part of the key
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": user_msg}]
@@ -67,6 +68,7 @@ def chat():
     except Exception as e:
         print("OpenAI Error:", e)
         return jsonify({"reply": "⚠️ Failed to get a response from OpenAI."})
+
 
 
 @app.route("/chatui")
