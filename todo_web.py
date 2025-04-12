@@ -53,7 +53,6 @@ def delete(index):
 def zones():
     return render_template("zones.html")
 
-# ✅ AI Chat endpoint (OpenAI v0.28 compatible)
 @app.route("/chat", methods=["POST"])
 def chat():
     user_msg = request.json.get("message")
@@ -69,8 +68,10 @@ def chat():
         return jsonify({"reply": reply})
     except Exception as e:
         import traceback
-        traceback.print_exc()
+        print("💥 OpenAI ERROR:", str(e))             # <-- Add this
+        traceback.print_exc()                         # <-- And this
         return jsonify({"reply": "⚠️ Failed to get a response from OpenAI."})
+
 
 # ✅ Webpage for AI chat UI
 @app.route("/chatui")
