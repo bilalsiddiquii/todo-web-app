@@ -57,13 +57,17 @@ def chat():
     if not user_msg:
         return jsonify({"error": "No message provided"}), 400
 
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": user_msg}]
-    )
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_msg}]
+        )
+        reply = response["choices"][0]["message"]["content"]
+        return jsonify({"reply": reply})
+    except Exception as e:
+        print("OpenAI Error:", e)
+        return jsonify({"reply": "⚠️ Failed to get a response from OpenAI."})
 
-    reply = response["choices"][0]["message"]["content"]
-    return jsonify({"reply": reply})
 
 @app.route("/chatui")
 def chatui():
