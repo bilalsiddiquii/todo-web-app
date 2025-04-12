@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import json
 import os
+import openai
 
 app = Flask(__name__)
 FILENAME = "tasks.json"
+
+# Set your API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def load_tasks():
     if os.path.exists(FILENAME):
@@ -47,8 +51,24 @@ def delete(index):
 def zones():
     return render_template("zones.html")
 
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_msg = request.json.get("message")
+    if not user_msg:
+        return jsonify({"error": "No message provided"}), 400
 
-import os
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": user_msg}]
+    )
+
+    reply = response["choices"][0]["message"]["content"]
+    return jsonify({"reply": reply})
+
+@app.route("/chatui")
+def chatui():
+    return render_template("chat.html")
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
