@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zone Layout</title>
+    <style>
+        body { background: #b0c4de; font-family: sans-serif; }
+        .grid { display: grid; grid-template-columns: repeat(10, 60px); gap: 5px; margin-bottom: 20px; }
+        .cell { width: 60px; height: 60px; text-align: center; vertical-align: middle; line-height: 60px; border: 1px solid #444; font-size: 12px; font-weight: bold; }
+        .header { background: black; color: white; }
+        .am { background: red; color: white; }
+        .pa { background: orange; }
+        .nu { background: #444; color: white; }
+        .ws { background: magenta; color: white; }
+        .u  { background: gray; color: white; }
+        .pg { background: white; border: 2px solid black; }
+        .zone-label { writing-mode: vertical-rl; text-orientation: mixed; font-weight: bold; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Zone Layout</h1>
+
+    <!-- Sample North Row -->
+    <div class="grid">
+        <div class="cell header">NU</div>
+        <div class="cell header">NU</div>
+        <div class="cell">1174</div>
+        <div class="cell">1173</div>
+        <div class="cell">1167</div>
+        <div class="cell">1161</div>
+        <div class="cell">1155</div>
+        <div class="cell">1149</div>
+        <div class="cell">1148</div>
+        <div class="cell">1136</div>
+    </div>
+
+    <!-- Add more rows like this... -->
+    <p><a href="/">Back to To-Do App</a></p>
+</body>
+</html>

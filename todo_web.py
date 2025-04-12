@@ -43,6 +43,11 @@ def delete(index):
     save_tasks(tasks)
     return redirect(url_for("index"))
 
+@app.route("/zones")
+def zones():
+    return render_template("zones.html")
+
+
 import os
 
 if __name__ == "__main__":
