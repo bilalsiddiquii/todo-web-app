@@ -1,153 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>AI Chat</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f4f4f4;
-            transition: background 0.3s, color 0.3s;
-        }
-        .dark-mode {
-            background: #121212;
-            color: white;
-        }
-        #chat-box {
-            max-width: 700px;
-            margin: 60px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }
-        .dark-mode #chat-box {
-            background: #1e1e1e;
-        }
-        .message {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        .message.user .avatar {
-            background: #007bff;
-        }
-        .message.bot .avatar {
-            background: #28a745;
-        }
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .content {
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-        #controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        input[type="text"] {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        button {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            background: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        #topbar {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 20px;
-            background: #eee;
-        }
-        .dark-mode #topbar {
-            background: #222;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat</title>
+  <style>
+    :root {
+      --bg-light: #f4f4f4;
+      --bg-dark: #121212;
+      --text-light: #000;
+      --text-dark: #fff;
+      --msg-user: #007bff;
+      --msg-bot: #28a745;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: var(--bg-light);
+      color: var(--text-light);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    header {
+      background: #eee;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    body.dark-mode header {
+      background: #222;
+    }
+
+    #chat-box {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode #chat-box {
+      background: #1e1e1e;
+    }
+
+    .message {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .message .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #888;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
+    .message.user .avatar { background: var(--msg-user); }
+    .message.bot .avatar { background: var(--msg-bot); }
+
+    .message .text {
+      background: #f0f0f0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 80%;
+    }
+
+    body.dark-mode .message .text {
+      background: #333;
+    }
+
+    #input-area {
+      display: flex;
+      max-width: 800px;
+      margin: 0 auto 40px;
+      gap: 10px;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #typing-indicator {
+      font-style: italic;
+      opacity: 0.6;
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-<div id="topbar">
+  <header>
     <span>👤 {{ username }}</span>
     <div>
-        <button onclick="toggleTheme()">🌓</button>
-        <button onclick="exportChat()">💾 Export</button>
-        <a href="/logout"><button>Logout</button></a>
+      <button onclick="toggleTheme()">🌓</button>
+      <button onclick="window.location='/export'">💾 Export</button>
+      <button onclick="window.location='/logout'">Logout</button>
     </div>
-</div>
-<div id="chat-box"></div>
-<div id="controls">
+  </header>
+
+  <div id="chat-box"></div>
+  <div id="typing-indicator">AI is typing...</div>
+
+  <div id="input-area">
     <input type="text" id="user-input" placeholder="Type your message...">
     <button onclick="sendMessage()">Send</button>
-    <button onclick="startVoice()">🎤</button>
-</div>
+  </div>
 
-<script>
+  <script>
     const chatBox = document.getElementById("chat-box");
     const input = document.getElementById("user-input");
+    const typingIndicator = document.getElementById("typing-indicator");
 
     function addMessage(role, text) {
-        const msg = document.createElement("div");
-        msg.className = `message ${role}`;
-        msg.innerHTML = `
-            <div class="avatar">${role === "user" ? "U" : "AI"}</div>
-            <div class="content">${text}</div>
-        `;
-        chatBox.appendChild(msg);
-        chatBox.scrollTop = chatBox.scrollHeight;
+      const div = document.createElement("div");
+      div.className = `message ${role}`;
+      div.innerHTML = `
+        <div class="avatar">${role === "user" ? "U" : "AI"}</div>
+        <div class="text">${text}</div>
+      `;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     async function sendMessage() {
-        const message = input.value.trim();
-        if (!message) return;
-        addMessage("user", message);
-        input.value = "";
+      const message = input.value.trim();
+      if (!message) return;
 
-        const res = await fetch("/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message })
-        });
-        const data = await res.json();
-        addMessage("bot", data.reply);
+      addMessage("user", message);
+      input.value = "";
+      typingIndicator.style.display = "block";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      typingIndicator.style.display = "none";
+      addMessage("bot", data.reply);
     }
 
     function toggleTheme() {
-        document.body.classList.toggle("dark-mode");
+      document.body.classList.toggle("dark-mode");
     }
 
-    function exportChat() {
-        window.location.href = "/export";
-    }
-
-    function startVoice() {
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = "en-US";
-        recognition.start();
-        recognition.onresult = (event) => {
-            input.value = event.results[0][0].transcript;
-            sendMessage();
-        };
-    }
-</script>
+    input.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
 </body>
 </html>
