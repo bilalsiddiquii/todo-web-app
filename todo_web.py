@@ -80,7 +80,8 @@ def vision():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return jsonify({"reply": "⚠️ Failed to analyze the image."})
+        print("Using fallback vision reply.")
+        return jsonify({"reply": "👁️ I received the image, but I can't analyze it at the moment. Please ensure your API key supports GPT-4 Vision."})
 
 @app.route("/logout")
 def logout():
