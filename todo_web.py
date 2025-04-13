@@ -63,7 +63,7 @@ def vision():
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4-vision-preview",
+            model="gpt-4-vision",
             messages=[
                 {
                     "role": "user",
@@ -81,7 +81,7 @@ def vision():
         import traceback
         traceback.print_exc()
         print("Using fallback vision reply.")
-        return jsonify({"reply": "👁️ I received the image, but I can't analyze it at the moment. Please ensure your API key supports GPT-4 Vision."})
+        return jsonify({"reply": "👁️ I received the image, but I can't analyze it at the moment. Please ensure your API key supports GPT-4 Vision or check the latest model name."})
 
 @app.route("/logout")
 def logout():
