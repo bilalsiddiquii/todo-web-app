@@ -12,7 +12,19 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/")
 def home():
-    return render_template("chat.html", username="Guest")
+    username = session.get("username", "Guest")
+    return render_template("chat.html", username=username)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        if username:
+            session["username"] = username
+            return redirect(url_for("home"))
+        else:
+            return render_template("login.html", error="Please enter a username")
+    return render_template("login.html")
 
 @app.route("/chat", methods=["POST"])
 def chat():
