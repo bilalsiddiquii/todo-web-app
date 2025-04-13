@@ -152,6 +152,7 @@
   <div id="input-area">
     <input type="text" id="user-input" placeholder="Type your message...">
     <button onclick="sendMessage()">Send</button>
+    <button onclick="startVoiceInput()">🎙️</button>
   </div>
 
   <script>
@@ -189,10 +190,36 @@
       const data = await res.json();
       typingIndicator.style.display = "none";
       addMessage("bot", data.reply);
+      speakText(data.reply);
     }
 
     function toggleTheme() {
       document.body.classList.toggle("dark-mode");
+    }
+
+    function startVoiceInput() {
+      const recognition = new(window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        input.value = transcript;
+        sendMessage();
+      };
+
+      recognition.onerror = function(event) {
+        alert("Voice recognition error: " + event.error);
+      };
+
+      recognition.start();
+    }
+
+    function speakText(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      speechSynthesis.speak(utterance);
     }
 
     input.addEventListener("keypress", function (e) {
