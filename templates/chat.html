@@ -1,87 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>AI Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
+            margin: 0;
+            background: #f4f4f4;
+            transition: background 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background: #121212;
+            color: white;
         }
         #chat-box {
-            width: 100%;
-            max-width: 600px;
-            margin: auto;
-            background: white;
+            max-width: 700px;
+            margin: 60px auto;
             padding: 20px;
+            background: white;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .dark-mode #chat-box {
+            background: #1e1e1e;
         }
         .message {
-            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
-        .user {
+        .message.user .avatar {
+            background: #007bff;
+        }
+        .message.bot .avatar {
+            background: #28a745;
+        }
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
-            color: #007bff;
+            margin-right: 10px;
         }
-        .ai {
-            font-weight: bold;
-            color: #28a745;
+        .content {
+            max-width: 80%;
+            word-wrap: break-word;
         }
-        #chat-log {
-            margin-bottom: 20px;
-            max-height: 400px;
-            overflow-y: auto;
+        #controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
         input[type="text"] {
-            width: 80%;
+            flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 6px;
         }
         button {
-            padding: 10px 20px;
+            padding: 10px 16px;
             border: none;
-            background-color: #007bff;
+            border-radius: 6px;
+            background: #007bff;
             color: white;
-            border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #0056b3;
+            background: #0056b3;
+        }
+        #topbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: #eee;
+        }
+        .dark-mode #topbar {
+            background: #222;
         }
     </style>
 </head>
 <body>
-    <div id="chat-box">
-        <h2>💬 AI Chat</h2>
-        <div id="chat-log"></div>
-        <input type="text" id="user-input" placeholder="Type your message...">
-        <button onclick="sendMessage()">Send</button>
+<div id="topbar">
+    <span>👤 {{ username }}</span>
+    <div>
+        <button onclick="toggleTheme()">🌓</button>
+        <button onclick="exportChat()">💾 Export</button>
+        <a href="/logout"><button>Logout</button></a>
     </div>
+</div>
+<div id="chat-box"></div>
+<div id="controls">
+    <input type="text" id="user-input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="startVoice()">🎤</button>
+</div>
 
-    <script>
-        async function sendMessage() {
-            const input = document.getElementById("user-input");
-            const chatLog = document.getElementById("chat-log");
-            const message = input.value.trim();
-            if (!message) return;
+<script>
+    const chatBox = document.getElementById("chat-box");
+    const input = document.getElementById("user-input");
 
-            chatLog.innerHTML += `<div class='message'><span class='user'>You:</span> ${message}</div>`;
-            input.value = "";
+    function addMessage(role, text) {
+        const msg = document.createElement("div");
+        msg.className = `message ${role}`;
+        msg.innerHTML = `
+            <div class="avatar">${role === "user" ? "U" : "AI"}</div>
+            <div class="content">${text}</div>
+        `;
+        chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-            const res = await fetch("/chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ message })
-            });
+    async function sendMessage() {
+        const message = input.value.trim();
+        if (!message) return;
+        addMessage("user", message);
+        input.value = "";
 
-            const data = await res.json();
-            chatLog.innerHTML += `<div class='message'><span class='ai'>AI:</span> ${data.reply}</div>`;
-            chatLog.scrollTop = chatLog.scrollHeight;
-        }
-    </script>
+        const res = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        addMessage("bot", data.reply);
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+    }
+
+    function exportChat() {
+        window.location.href = "/export";
+    }
+
+    function startVoice() {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.start();
+        recognition.onresult = (event) => {
+            input.value = event.results[0][0].transcript;
+            sendMessage();
+        };
+    }
+</script>
 </body>
 </html>
