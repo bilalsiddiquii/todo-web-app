@@ -1,22 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <style>
-    body { font-family: Arial; background: #f5f5f5; text-align: center; padding: 80px; }
-    form { display: inline-block; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
-    input { padding: 10px; width: 250px; margin-bottom: 15px; }
-    button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; }
-  </style>
+    <title>Login</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 40px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-  <form method="POST">
-    <h2>Welcome! 👋</h2>
-    <p>Enter a username to begin chatting</p>
-    <input name="username" placeholder="Your name..." required>
-    <br>
-    <button type="submit">Enter</button>
-  </form>
+    <h2>Login</h2>
+    <form method="post">
+        <label>Username:</label>
+        <input type="text" name="username" required>
+        <button type="submit">Login</button>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    </form>
 </body>
 </html>
