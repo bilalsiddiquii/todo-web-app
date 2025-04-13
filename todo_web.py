@@ -10,6 +10,13 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key")  # For session support
 
+@app.route("/")
+def home():
+    if "username" in session:
+        return redirect(url_for("chatui"))
+    return redirect(url_for("login"))
+
+
 # ✅ Auth system: simple username session
 @app.route("/login", methods=["GET", "POST"])
 def login():
