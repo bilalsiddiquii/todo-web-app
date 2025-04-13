@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session, send_file
-import json
 import os
 import openai
 import uuid
@@ -10,51 +9,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key")  # For session support
-FILENAME = "tasks.json"
-
-# ✅ Load & save tasks for the to-do list
-def load_tasks():
-    if os.path.exists(FILENAME):
-        with open(FILENAME, "r") as f:
-            return json.load(f)
-    return []
-
-def save_tasks(tasks):
-    with open(FILENAME, "w") as f:
-        json.dump(tasks, f)
-
-# ✅ Routes for your to-do app
-@app.route("/")
-def index():
-    tasks = load_tasks()
-    return render_template("index.html", tasks=tasks)
-
-@app.route("/add", methods=["POST"])
-def add():
-    desc = request.form["task"]
-    tasks = load_tasks()
-    tasks.append({"description": desc, "done": False})
-    save_tasks(tasks)
-    return redirect(url_for("index"))
-
-@app.route("/done/<int:index>")
-def done(index):
-    tasks = load_tasks()
-    tasks[index]["done"] = True
-    save_tasks(tasks)
-    return redirect(url_for("index"))
-
-@app.route("/delete/<int:index>")
-def delete(index):
-    tasks = load_tasks()
-    if 0 <= index < len(tasks):
-        del tasks[index]
-    save_tasks(tasks)
-    return redirect(url_for("index"))
-
-@app.route("/zones")
-def zones():
-    return render_template("zones.html")
 
 # ✅ Auth system: simple username session
 @app.route("/login", methods=["GET", "POST"])
@@ -103,7 +57,7 @@ def chat():
 def chatui():
     if "username" not in session:
         return redirect(url_for("login"))
-    return render_template("chat.html", username=session["username"])  # username passed in
+    return render_template("chat.html", username=session["username"])
 
 # ✅ Export chat to .txt
 @app.route("/export")
