@@ -97,12 +97,13 @@
 
     #input-area {
       display: flex;
+      flex-wrap: wrap;
       max-width: 800px;
       margin: 20px auto 40px;
       gap: 10px;
     }
 
-    #user-input {
+    #user-input, #image-input {
       flex: 1;
       padding: 10px;
       border-radius: 8px;
@@ -151,6 +152,7 @@
 
   <div id="input-area">
     <input type="text" id="user-input" placeholder="Type your message...">
+    <input type="file" id="image-input" accept="image/*">
     <button onclick="sendMessage()">Send</button>
     <button onclick="startVoiceInput()">🎙️</button>
   </div>
@@ -158,15 +160,19 @@
   <script>
     const chatBox = document.getElementById("chat-box");
     const input = document.getElementById("user-input");
+    const imageInput = document.getElementById("image-input");
     const typingIndicator = document.getElementById("typing-indicator");
     const modeSelect = document.getElementById("mode-select");
 
-    function addMessage(role, text) {
+    function addMessage(role, text, imgSrc = null) {
       const div = document.createElement("div");
       div.className = `message ${role}`;
       div.innerHTML = `
         <div class="avatar">${role === "user" ? "U" : "AI"}</div>
-        <div class="text">${text}</div>
+        <div class="text">
+          ${imgSrc ? `<img src="${imgSrc}" style="max-width: 100%; margin-bottom: 10px;"><br>` : ""}
+          ${text}
+        </div>
       `;
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -175,16 +181,31 @@
     async function sendMessage() {
       const message = input.value.trim();
       const mode = modeSelect.value;
-      if (!message) return;
+      const image = imageInput.files[0];
 
-      addMessage("user", message);
+      if (!message && !image) return;
+
+      let imagePreview = null;
+      if (image) {
+        imagePreview = URL.createObjectURL(image);
+        addMessage("user", message || "(uploaded image)", imagePreview);
+      } else {
+        addMessage("user", message);
+      }
+
       input.value = "";
+      imageInput.value = "";
       typingIndicator.style.display = "block";
 
-      const res = await fetch("/chat", {
+      const formData = new FormData();
+      formData.append("message", message);
+      formData.append("mode", mode);
+      if (image) formData.append("image", image);
+
+      const res = await fetch(image ? "/vision" : "/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, mode })
+        body: image ? formData : JSON.stringify({ message, mode }),
+        headers: image ? {} : { "Content-Type": "application/json" }
       });
 
       const data = await res.json();
