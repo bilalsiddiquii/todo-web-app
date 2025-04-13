@@ -36,13 +36,25 @@ def logout():
 # ✅ AI Chat endpoint with memory
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_msg = request.json.get("message")
+    data = request.get_json()
+    user_msg = data.get("message")
+    mode = data.get("mode", "assistant")  # default to assistant
     if not user_msg:
         return jsonify({"error": "No message provided"}), 400
 
-    # Store memory in session
     if "chat" not in session:
         session["chat"] = []
+
+    # Apply mode-specific system prompt
+    mode_prompts = {
+        "assistant": "You are a helpful assistant.",
+        "coder": "You are a programming expert. Answer all coding questions with concise and accurate code examples.",
+        "creative": "You are a poetic and creative writer. Respond in imaginative and artistic ways.",
+        "therapist": "You are a kind and thoughtful therapist helping users with emotional clarity.",
+        "teacher": "You are a patient teacher explaining concepts clearly and with examples."
+    }
+
+    session["chat"] = [{"role": "system", "content": mode_prompts.get(mode, mode_prompts["assistant"])}] + session["chat"]
 
     session["chat"].append({"role": "user", "content": user_msg})
 
@@ -58,6 +70,7 @@ def chat():
         import traceback
         traceback.print_exc()
         return jsonify({"reply": "⚠️ Failed to get a response from OpenAI."})
+
 
 # ✅ Webpage for AI chat UI
 @app.route("/chatui")
