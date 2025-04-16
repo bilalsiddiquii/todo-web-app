@@ -1,49 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chat</title>
-    <style>
-        body { font-family: sans-serif; padding: 40px; background-color: #fff0f0; }
-        #chat-box { max-width: 600px; margin: auto; border: 1px solid #e63946; padding: 20px; border-radius: 10px; background-color: white; }
-        .message { margin-bottom: 15px; }
-        .user { color: #1d3557; font-weight: bold; }
-        .bot { color: #e63946; }
-        textarea { width: 100%; padding: 10px; border: 1px solid #e63946; border-radius: 5px; margin-top: 10px; }
-        button { background: #e63946; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; }
-        button:hover { background: #d62839; }
-        .top-links { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .top-links a { text-decoration: none; color: #e63946; font-weight: bold; }
-    </style>
+  <title>My AI Agents</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; background: #fbecec; color: #333; }
+    .container { display: flex; height: 100vh; }
+    .sidebar {
+      width: 250px; background: #e63946; color: white; padding: 20px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .sidebar h2 { margin-top: 0; }
+    .agent-btn {
+      background: white; color: #e63946; padding: 10px; border: none;
+      border-radius: 8px; margin-bottom: 10px; cursor: pointer; width: 100%;
+      text-align: left;
+    }
+    .main {
+      flex: 1; padding: 30px; display: flex; flex-direction: column;
+    }
+    .chat-box { flex: 1; overflow-y: auto; margin-bottom: 20px; }
+    .bubble { margin: 10px 0; }
+    .you { color: #e63946; font-weight: bold; }
+    .ai { color: #1d3557; font-weight: bold; }
+    input, button {
+      padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc;
+    }
+    #messageInput { width: 80%; }
+    #sendBtn { background: #e63946; color: white; border: none; margin-left: 10px; }
+  </style>
 </head>
 <body>
-    <div id="chat-box">
-        <div class="top-links">
-            <div><strong>{{ mode if mode != 'assistant' else 'Default Assistant' }}</strong></div>
-            <div><a href="/custom">✨ Create Your Own Agent</a></div>
-        </div>
-        <div id="messages"></div>
-        <textarea id="user-input" placeholder="Type your message..."></textarea>
-        <button onclick="sendMessage()">Send</button>
+  <div class="container">
+    <div class="sidebar">
+      <div>
+        <h2>🎭 Agents</h2>
+        <form method="POST" action="/select">
+          <button class="agent-btn" name="mode" value="assistant">Assistant</button>
+          <button class="agent-btn" name="mode" value="coder">Coder</button>
+          <button class="agent-btn" name="mode" value="therapist">Therapist</button>
+          <button class="agent-btn" name="mode" value="startup_coach">Startup Coach</button>
+          <button class="agent-btn" name="mode" value="creative">Creative Writer</button>
+          <button class="agent-btn" name="mode" value="custom">Custom</button>
+        </form>
+      </div>
+      <div>
+        <a href="/custom" style="color:white; text-decoration: underline;">+ Create Custom Agent</a>
+      </div>
     </div>
 
-    <script>
-        async function sendMessage() {
-            const userInput = document.getElementById("user-input").value;
-            if (!userInput.trim()) return;
+    <div class="main">
+      <h2>🧠 Chat with <span id="activeAgent">{{ mode.capitalize() }}</span></h2>
+      <div id="chatLog" class="chat-box"></div>
 
-            const messagesDiv = document.getElementById("messages");
-            messagesDiv.innerHTML += `<div class='message user'>You: ${userInput}</div>`;
-            document.getElementById("user-input").value = "";
+      <div>
+        <input type="text" id="messageInput" placeholder="Type your message..." />
+        <button id="sendBtn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
 
-            const res = await fetch("/chat?mode={{ 'custom' if mode != 'assistant' and mode != None else 'assistant' }}", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: userInput })
-            });
+  <script>
+    async function sendMessage() {
+      const msg = document.getElementById("messageInput").value;
+      if (!msg.trim()) return;
 
-            const data = await res.json();
-            messagesDiv.innerHTML += `<div class='message bot'>Bot: ${data.reply}</div>`;
-        }
-    </script>
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+
+      const log = document.getElementById("chatLog");
+      log.innerHTML += `<div class='you'>You: ${msg}</div>`;
+      log.innerHTML += `<div class='ai'>AI: ${data.reply}</div>`;
+      log.scrollTop = log.scrollHeight;
+      document.getElementById("messageInput").value = "";
+    }
+  </script>
 </body>
 </html>
