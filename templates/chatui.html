@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Chat App</title>
+  <style>
+    body { background: #fef6f6; font-family: sans-serif; margin: 0; padding: 40px; color: #333; }
+    .chat-box { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .bubble { margin: 10px 0; }
+    .you { color: crimson; font-weight: bold; }
+    .ai { color: darkblue; font-weight: bold; }
+    select, input, button { padding: 8px; font-size: 1rem; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="chat-box">
+    <h2>🤖 AI Chat</h2>
+    <form method="post" action="/select">
+      <label>Select Agent:</label>
+      <select name="mode">
+        <option value="assistant">General Assistant</option>
+        <option value="coder">Coder</option>
+        <option value="therapist">Therapist</option>
+        <option value="startup_coach">Startup Coach</option>
+        <option value="creative">Creative Writer</option>
+        <option value="custom">Custom Agent</option>
+      </select>
+      <button type="submit">Switch</button>
+    </form>
+
+    <div id="chatLog" class="bubble"></div>
+
+    <input type="text" id="messageInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const msg = document.getElementById("messageInput").value;
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      const log = document.getElementById("chatLog");
+      log.innerHTML += `<div class='you'>You: ${msg}</div>`;
+      log.innerHTML += `<div class='ai'>AI: ${data.reply}</div>`;
+      document.getElementById("messageInput").value = "";
+    }
+  </script>
+</body>
+</html>

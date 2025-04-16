@@ -18,17 +18,14 @@ mode_prompts = {
 # --- Routes ---
 @app.route("/")
 def index():
-    return render_template("chat.html")
+    return render_template("chatui.html", mode=session.get("mode", "assistant"))
 
 @app.route("/chat", methods=["POST"])
 def chat():
     user_msg = request.json.get("message")
-    mode = request.args.get("mode", "assistant")
+    mode = session.get("mode", "assistant")
 
-    if mode == "custom":
-        system_msg = session.get("custom_prompt", "You are a helpful assistant.")
-    else:
-        system_msg = mode_prompts.get(mode, "You are a helpful assistant.")
+    system_msg = session.get("custom_prompt") if mode == "custom" else mode_prompts.get(mode, mode_prompts["assistant"])
 
     messages = [
         {"role": "system", "content": system_msg},
@@ -43,20 +40,22 @@ def chat():
         reply = response["choices"][0]["message"]["content"]
         return jsonify({"reply": reply})
     except Exception as e:
-        return jsonify({"reply": "⚠️ OpenAI failed: " + str(e)})
+        return jsonify({"reply": "\u26a0\ufe0f OpenAI failed: " + str(e)})
+
+@app.route("/select", methods=["POST"])
+def select():
+    mode = request.form.get("mode")
+    session["mode"] = mode
+    return redirect(url_for("index"))
 
 @app.route("/custom", methods=["GET", "POST"])
 def custom():
     if request.method == "POST":
         session["custom_prompt"] = request.form["prompt"]
-        return redirect("/chatui?mode=custom")
+        session["mode"] = "custom"
+        return redirect("/")
     return render_template("custom.html")
 
-@app.route("/chatui")
-def chatui():
-    return render_template("chat.html")
-
-# --- Main entry ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
