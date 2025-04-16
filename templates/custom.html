@@ -1,11 +1,107 @@
 <!DOCTYPE html>
-<html>
-<head><title>Custom Agent</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Your Agent</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fef2f2;
+      color: #222;
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #dc2626;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .main {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #dc2626;
+    }
+
+    form {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 16px;
+      height: 200px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      resize: vertical;
+    }
+
+    button {
+      background: #dc2626;
+      color: white;
+      padding: 14px;
+      border: none;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #b91c1c;
+    }
+
+    .back {
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+
+    .back a {
+      color: #dc2626;
+      text-decoration: underline;
+    }
+  </style>
+</head>
 <body>
-  <h2>Define Your Own Agent</h2>
-  <form method="post">
-    <textarea name="prompt" rows="6" cols="60" placeholder="Describe your custom agent’s behavior..."></textarea><br>
-    <button type="submit">Save & Chat</button>
-  </form>
+  <div class="sidebar">
+    <div>
+      <h2>🎨 Custom Agent</h2>
+      <p>Define your AI's personality by writing a system prompt.</p>
+    </div>
+    <div class="back">
+      <a href="/">← Back to Chat</a>
+    </div>
+  </div>
+
+  <div class="main">
+    <h1>🛠 Build Your Agent</h1>
+    <form method="POST">
+      <textarea name="prompt" placeholder="e.g., You are my mom. Be warm, caring, and give motherly advice."></textarea>
+      <button type="submit">✨ Set Agent</button>
+    </form>
+  </div>
 </body>
 </html>
