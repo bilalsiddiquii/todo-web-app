@@ -1,251 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chat</title>
-  <style>
-    :root {
-      --bg-light: #f4f4f4;
-      --bg-dark: #121212;
-      --text-light: #000;
-      --text-dark: #fff;
-      --msg-user: #007bff;
-      --msg-bot: #28a745;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: var(--bg-light);
-      color: var(--text-light);
-      transition: background 0.3s, color 0.3s;
-    }
-
-    body.dark-mode {
-      background: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
-    header {
-      background: #eee;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    body.dark-mode header {
-      background: #222;
-    }
-
-    #chat-box {
-      max-width: 800px;
-      margin: 60px auto 20px;
-      padding: 20px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    body.dark-mode #chat-box {
-      background: #1e1e1e;
-    }
-
-    .message {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 15px;
-      line-height: 1.5;
-    }
-
-    .message .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #888;
-      color: white;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
-    }
-
-    .message.user .avatar { background: var(--msg-user); }
-    .message.bot .avatar { background: var(--msg-bot); }
-
-    .message .text {
-      background: #f0f0f0;
-      padding: 10px 14px;
-      border-radius: 10px;
-      max-width: 80%;
-    }
-
-    body.dark-mode .message .text {
-      background: #333;
-    }
-
-    #typing-indicator {
-      font-style: italic;
-      opacity: 0.6;
-      display: none;
-      margin: 0 auto;
-      max-width: 800px;
-      text-align: center;
-    }
-
-    #input-area {
-      display: flex;
-      flex-wrap: wrap;
-      max-width: 800px;
-      margin: 20px auto 40px;
-      gap: 10px;
-    }
-
-    #user-input, #image-input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-  </style>
+    <title>Chat</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; background-color: #fff0f0; }
+        #chat-box { max-width: 600px; margin: auto; border: 1px solid #e63946; padding: 20px; border-radius: 10px; background-color: white; }
+        .message { margin-bottom: 15px; }
+        .user { color: #1d3557; font-weight: bold; }
+        .bot { color: #e63946; }
+        textarea { width: 100%; padding: 10px; border: 1px solid #e63946; border-radius: 5px; margin-top: 10px; }
+        button { background: #e63946; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; }
+        button:hover { background: #d62839; }
+        .top-links { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .top-links a { text-decoration: none; color: #e63946; font-weight: bold; }
+    </style>
 </head>
 <body>
-  <header>
-    <span>👤 {{ username }}</span>
-    <div>
-      <select id="mode-select">
-        <option value="assistant">🤖 Assistant</option>
-        <option value="coder">💻 Coder</option>
-        <option value="creative">🎨 Creative</option>
-        <option value="therapist">🧘 Therapist</option>
-        <option value="teacher">🧑‍🏫 Teacher</option>
-      </select>
-      <button onclick="toggleTheme()">🌓</button>
-      <button onclick="window.location='/export'">💾 Export</button>
-      <button onclick="window.location='/logout'">Logout</button>
-    </div>
-  </header>
-
-  <div id="chat-box"></div>
-  <div id="typing-indicator">AI is typing...</div>
-
-  <div id="input-area">
-    <input type="text" id="user-input" placeholder="Type your message...">
-    <input type="file" id="image-input" accept="image/*">
-    <button onclick="sendMessage()">Send</button>
-    <button onclick="startVoiceInput()">🎙️</button>
-  </div>
-
-  <script>
-    const chatBox = document.getElementById("chat-box");
-    const input = document.getElementById("user-input");
-    const imageInput = document.getElementById("image-input");
-    const typingIndicator = document.getElementById("typing-indicator");
-    const modeSelect = document.getElementById("mode-select");
-
-    function addMessage(role, text, imgSrc = null) {
-      const div = document.createElement("div");
-      div.className = `message ${role}`;
-      div.innerHTML = `
-        <div class="avatar">${role === "user" ? "U" : "AI"}</div>
-        <div class="text">
-          ${imgSrc ? `<img src="${imgSrc}" style="max-width: 100%; margin-bottom: 10px;"><br>` : ""}
-          ${text}
+    <div id="chat-box">
+        <div class="top-links">
+            <div><strong>{{ mode if mode != 'assistant' else 'Default Assistant' }}</strong></div>
+            <div><a href="/custom">✨ Create Your Own Agent</a></div>
         </div>
-      `;
-      chatBox.appendChild(div);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+        <div id="messages"></div>
+        <textarea id="user-input" placeholder="Type your message..."></textarea>
+        <button onclick="sendMessage()">Send</button>
+    </div>
 
-    async function sendMessage() {
-      const message = input.value.trim();
-      const mode = modeSelect.value;
-      const image = imageInput.files[0];
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            if (!userInput.trim()) return;
 
-      if (!message && !image) return;
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML += `<div class='message user'>You: ${userInput}</div>`;
+            document.getElementById("user-input").value = "";
 
-      let imagePreview = null;
-      if (image) {
-        imagePreview = URL.createObjectURL(image);
-        addMessage("user", message || "(uploaded image)", imagePreview);
-      } else {
-        addMessage("user", message);
-      }
+            const res = await fetch("/chat?mode={{ 'custom' if mode != 'assistant' and mode != None else 'assistant' }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userInput })
+            });
 
-      input.value = "";
-      imageInput.value = "";
-      typingIndicator.style.display = "block";
-
-      const formData = new FormData();
-      formData.append("message", message);
-      formData.append("mode", mode);
-      if (image) formData.append("image", image);
-
-      const res = await fetch(image ? "/vision" : "/chat", {
-        method: "POST",
-        body: image ? formData : JSON.stringify({ message, mode }),
-        headers: image ? {} : { "Content-Type": "application/json" }
-      });
-
-      const data = await res.json();
-      typingIndicator.style.display = "none";
-      addMessage("bot", data.reply);
-      speakText(data.reply);
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle("dark-mode");
-    }
-
-    function startVoiceInput() {
-      const recognition = new(window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        input.value = transcript;
-        sendMessage();
-      };
-
-      recognition.onerror = function(event) {
-        alert("Voice recognition error: " + event.error);
-      };
-
-      recognition.start();
-    }
-
-    function speakText(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      speechSynthesis.speak(utterance);
-    }
-
-    input.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") sendMessage();
-    });
-  </script>
+            const data = await res.json();
+            messagesDiv.innerHTML += `<div class='message bot'>Bot: ${data.reply}</div>`;
+        }
+    </script>
 </body>
 </html>
